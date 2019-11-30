@@ -1,16 +1,10 @@
-from datetime import date, timedelta
+from db.db_types import UtilTypes
 from db.adapter import db_adapter
-from enum import Enum
-
-
-class UtilTypes(Enum):
-    PROFESSION = "Profession",
-    WORKER = "Worker",
-    BLANK = "Blank",
 
 
 class UtilSuperclass:
     def __init__(self):
+
         self.util_type = None
         self.id = None
 
@@ -39,23 +33,12 @@ class Worker(UtilSuperclass):
         self.profession = profession
 
 
-class Month(date):
-    def __init__(self, month, year):
-        super().__init__(year=year, month=month, day=28)
-
-    def _last_day_of_month(self):
-        next_month = self + timedelta(days=4)
-        return next_month - timedelta(days=next_month.day)
-
-    def __len__(self):
-        return self._last_day_of_month().day
-
-
 class Blank(UtilSuperclass):
 
-    def __init__(self, data, month):
+    def __init__(self, data, month, worker):
         super().__init__()
         self.util_type = UtilTypes.BLANK
         assert len(data) == len(month)
         self.data = data
         self.month = month
+        self.worker = worker
