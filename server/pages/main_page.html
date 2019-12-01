@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Нарахування заробітної плати</title>
+</head>
+<body>
+<h1>Нарахування заробітной плати</h1>
+<table>
+    <tr><td>
+<form  method="post" action="show_professions">
+<input type="submit" value="Переглянути посади" name="show_professions">
+</form>
+    </td>
+        <td>
+<form  method="post" name="show_workers" action="show_workers">
+<input type="submit" value="Переглянути робітників" name="show_workers">
+</form>
+    </td>
+        <td>
+<form  method="post" name="show_blanks" action="show_blanks">
+<input type="submit" value="Переглянути табель" name="show_blanks">
+</form>
+    </td>
+    </tr>
+</table>
+<hr>
+<form>
+<table>
+    <tr>
+        <td rowspan="3"><input type="submit" value="Розрахунок"></td><td><input type="radio" name="calc" value="month"></td><th colspan="2">За місяцем</th><td><input type="radio" name="calc" value="worker"></td><th>За робітником</th>
+    </tr>
+    <tr>
+        <td></td><td>Місяць</td><td>Рік</td><td></td><td>Робітник</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <select name="month">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+            </select>
+        </td>
+        <td><input type="text" maxlength="4" size="4" name="year"></td>
+        <td></td>
+        <td>
+            <select>
+                {}
+            </select>
+        </td>
+    </tr>
+</table>
+</form>
+</body>
+</html>

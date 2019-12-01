@@ -110,6 +110,14 @@ class DbAdapter:
         blank.id = self.cursor.lastrowid
 
     def delete(self, util_obj):
+        if util_obj.util_type == UtilTypes.PROFESSION:
+            self.cursor.execute("DELETE FROM blanks "
+                                " WHERE worker_id=("
+                                "SELECT w.id FROM workers w WHERE"
+                                " profession_id=?)", (util_obj.id, ))
+            self.cursor.execute("DELETE FROM workers WHERE profession_id=?", (util_obj.id, ))
+        if util_obj.util_type == UtilTypes.WORKER:
+            self.cursor.execute("DELETE from blanks WHERE worker_id=?", (util_obj.id, ))
         logging.info(f"Deleting {util_obj.util_type}:{util_obj.id}")
         assert util_obj.id, "Object not in db"
         query = f"DELETE from {util_obj.util_type.value[0]} where id=?"
@@ -132,7 +140,7 @@ class DbAdapter:
         return self.cursor.fetchall()
 
 
-PATH = "db/Salary.db"
+PATH = "../db/Salary.db"
 if not os.path.exists(PATH):
     db_adapter = DbAdapter(PATH)
     db_adapter.create_table()

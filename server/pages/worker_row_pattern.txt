@@ -1,0 +1,7 @@
+<form method="post">
+        <tr><td><input type="text" value="{}" name="id" readonly></td>
+            <td><input type="text" value="{}" name="name"></td>
+            <td>{}</td>
+            <td><input type="submit" value="Змінти" formaction="change_worker"></td>
+            <td><input type="submit" value="Видалити" formaction="del_worker"></td></tr>
+    </form>
