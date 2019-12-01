@@ -45,4 +45,17 @@ class HArray(list):
     @classmethod
     def from_sqlite(cls, text):
         text = text.decode()
-        return cls(map(lambda x: int(x) if x not in {"л","в"} else x, text.split('x')))
+        return cls(map(lambda x: int(x) if x not in {"л", "в"} else x, text.split('x')))
+
+    def hours_worked(self):
+        return sum(filter(lambda x: isinstance(x, int), self))
+
+    def vacation(self):
+        return len(list(filter(lambda x: x == "в", self)))
+
+    def ill(self):
+        return len(list(filter(lambda x: x == "в", self)))
+
+    def mean(self):
+        return self.hours_worked()/len(list(filter(lambda x: isinstance(x, int), self)))
+

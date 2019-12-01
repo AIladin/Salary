@@ -14,6 +14,9 @@ class UtilSuperclass:
             self.util_type = None
         self.id = None
 
+    def __eq__(self, other):
+        return self.id == other.id
+
     @classmethod
     def from_db(cls, _id=None):
         rez = []

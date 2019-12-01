@@ -14,7 +14,8 @@ BLANK_PAGE = "pages/blank_page.html"
 with open("pages/blank_row_pattern.txt", 'r', encoding="utf-8") as f:
     BLANK_PATT = f.read()
 CALC_PAGE = "pages/calc_page.html"
-
+with open("pages/calc_pattern.txt", 'r', encoding="utf-8") as f:
+    CALC_PATT = f.read()
 
 
 class SalaryServer:
@@ -182,7 +183,7 @@ class SalaryServer:
         <form method="post">
         <tr>
             <td></td>
-            <td><input type="text" value="00-0000" size=8 name="date" maxlength=8></td>
+            <td><input type="text" value="01-2000" size=7 name="date" maxlength=8></td>
             <td>
             {}
             </td>
@@ -233,24 +234,65 @@ class SalaryServer:
 
     def calcs(self, form: cgi.FieldStorage):
         calc_type = form.getfirst("calc", "")
-        if calc_type == "Робітник":
-            month = Month.from_m_y(*map(int, form.getfirst("date", "").split("-")))
-            return self._month_calc(month)
-        else:
-            worker = Worker.from_db(int(form.getfirst('worker_id', "")))
-            b_month = Month.from_m_y(*map(int, form.getfirst("begin_date", "").split("-")))
-            e_month = Month.from_m_y(*map(int, form.getfirst("end_date", "").split("-")))
-            return self._worker_calc(worker, b_month, e_month)
+        try:
+            if calc_type == "Робітник":
+                month = Month.from_m_y(*map(int, form.getfirst("date", "").split("-")))
+                return self._month_calc(month)
+            else:
+                worker = Worker.from_db(int(form.getfirst('worker_id', "")))
+                b_month = Month.from_m_y(*map(int, form.getfirst("begin_date", "").split("-")))
+                e_month = Month.from_m_y(*map(int, form.getfirst("end_date", "").split("-")))
+                return self._worker_calc(worker, b_month, e_month)
+        except:
+            logging.warning("Wrong input working on.")
+            return self.start(form)
 
     def _month_calc(self, month):
         with open(CALC_PAGE, "r", encoding='utf-8') as f:
             cnt = f.read()
-        return cnt.format("Робітник")
+        table = ""
+        rez_s = 0
+        for blank in Blank.from_db():
+            if blank.month == month:
+                s = (blank.data.hours_worked() if blank.data.hours_worked() < blank.worker.profession.min_hours
+                     else blank.worker.profession.min_hours)*blank.worker.profession.salary +\
+                     blank.data.mean()*blank.data.vacation() + 8/10*blank.data.ill()*blank.worker.profession.salary
+                rez_s += s
+                color = "#DAF7A6"
+                if blank.data.hours_worked() < blank.worker.profession.min_hours:
+                    color = "#FF5733"
+                table += CALC_PATT.format(color,
+                                          blank.worker.name,
+                                          blank.data.hours_worked(),
+                                          blank.worker.profession.min_hours,
+                                          blank.data.vacation(),
+                                          blank.data.ill(),
+                                          s)
+        return cnt.format(f"Місяць {month}", "Робітник", table, rez_s)
 
     def _worker_calc(self, worker, b_month, e_month):
         with open(CALC_PAGE, "r", encoding='utf-8') as f:
             cnt = f.read()
-        return cnt.format("Місяць")
+        table = ""
+        rez_s = 0
+        for blank in Blank.from_db():
+            if blank.worker == worker and b_month < blank.month < e_month:
+                s = (blank.data.hours_worked() if blank.data.hours_worked() < blank.worker.profession.min_hours
+                     else blank.worker.profession.min_hours) * blank.worker.profession.salary + \
+                    blank.data.mean() * blank.data.vacation() +\
+                    8 / 10 * blank.data.ill() * blank.worker.profession.salary
+                rez_s += s
+                color = "#DAF7A6"
+                if blank.data.hours_worked() < blank.worker.profession.min_hours:
+                    color = "#FF5733"
+                table += CALC_PATT.format(color,
+                                          blank.month,
+                                          blank.data.hours_worked(),
+                                          blank.worker.profession.min_hours,
+                                          blank.data.vacation(),
+                                          blank.data.ill(),
+                                          s)
+        return cnt.format(f"Робітник: {worker.name}\n Посада:{worker.profession.name}", "Місяць", table, rez_s)
 
 
 if __name__ == '__main__':
