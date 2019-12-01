@@ -3,9 +3,9 @@ from enum import Enum
 
 
 class UtilTypes(Enum):
-    PROFESSION = "Profession",
-    WORKER = "Worker",
-    BLANK = "Blank",
+    PROFESSION = "professions",
+    WORKER = "workers",
+    BLANK = "blanks",
 
 
 class Month(date):

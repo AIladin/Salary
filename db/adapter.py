@@ -20,8 +20,8 @@ CREATE TABLE workers(
 CREATE TABLE blanks(
             id integer PRIMARY KEY AUTOINCREMENT,
             worker_id integer,
-            data month,
-            date array,
+            data array,
+            date month,
             FOREIGN KEY (worker_id) REFERENCES workers(id)
             );
 """]
@@ -110,26 +110,26 @@ class DbAdapter:
         blank.id = self.cursor.lastrowid
 
     def delete(self, util_obj):
-        pass
+        logging.info(f"Deleting {util_obj.util_type}:{util_obj.id}")
+        assert util_obj.id, "Object not in db"
+        query = f"DELETE from {util_obj.util_type.value[0]} where id=?"
+        self.cursor.execute(query, (util_obj.id,))
+        self.conn.commit()
+        logging.info("Done")
 
     def get(self, util_type, _id=None):
-        if util_type == UtilTypes.PROFESSION:
-            self._get_profession(util_type, _id=None)
-        elif util_type == UtilTypes.WORKER:
-            self._get_worker(util_type, _id=None)
-        elif util_type == UtilTypes.BLANK:
-            self._get_blank(util_type, _id=None)
+        logging.info(f"Getting {util_type}:{_id}")
+        if util_type not in UtilTypes:
+            raise ValueError(f"Wrong util type {util_type}")
+        query = f"SELECT * FROM {util_type.value[0]} "
+        if _id:
+            query += "WHERE id=?"
+            self.cursor.execute(query, (_id, ))
         else:
-            raise ValueError(f"Wrong util type {util_type}.")
-
-    def _get_profession(self, util_type, _id=None):
-        pass
-
-    def _get_worker(self, util_type, _id=None):
-        pass
-
-    def _get_blank(self, util_type, _id=None):
-        pass
+            self.cursor.execute(query)
+        self.conn.commit()
+        logging.info("Done")
+        return self.cursor.fetchall()
 
 
 PATH = "db/Salary.db"
