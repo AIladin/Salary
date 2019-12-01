@@ -20,6 +20,9 @@ class Month(date):
     def __len__(self):
         return self._last_day_of_month().day
 
+    def __str__(self):
+        return f"{self.month}-{self.year}"
+
     @staticmethod
     def to_sqlite(month):
         return month.strftime("%Y%m")
@@ -42,4 +45,4 @@ class HArray(list):
     @classmethod
     def from_sqlite(cls, text):
         text = text.decode()
-        return cls(map(int, text.split('x')))
+        return cls(map(lambda x: int(x) if x not in {"л","в"} else x, text.split('x')))

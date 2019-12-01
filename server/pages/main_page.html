@@ -26,38 +26,27 @@
 </table>
 <hr>
 <form>
-<table>
+<table border="1">
     <tr>
-        <td rowspan="3"><input type="submit" value="Розрахунок"></td><td><input type="radio" name="calc" value="month"></td><th colspan="2">За місяцем</th><td><input type="radio" name="calc" value="worker"></td><th>За робітником</th>
+        <td rowspan="3"><input type="submit" value="Розрахунок" formaction="show_calc"></td>
+        <th colspan="2">
+        <input type="radio" name="calc" value="Робітник" checked="checked">За місяцем</th><th colspan="4">
+        <input type="radio" name="calc" value="Місяць">За робітником</th>
     </tr>
     <tr>
-        <td></td><td>Місяць</td><td>Рік</td><td></td><td>Робітник</td>
+        <td colspan="2">Місяць</td><td colspan="2">Робітник</td><td>З:</td><td>По:</td>
     </tr>
     <tr>
-        <td></td>
-        <td>
-            <select name="month">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-            </select>
-        </td>
-        <td><input type="text" maxlength="4" size="4" name="year"></td>
-        <td></td>
-        <td>
-            <select>
+
+        <td colspan="2"><input type="text" maxlength="8" size="10" value="00-0000" name="date"></td>
+
+        <td colspan="2">
+            <select name="worker_id">
                 {}
             </select>
         </td>
+        <td><input type="text" maxlength="8" size="8" value="00-0000" name="begin_date"></td>
+        <td><input type="text" maxlength="8" size="8" value="00-0000" name="end_date"></td>
     </tr>
 </table>
 </form>

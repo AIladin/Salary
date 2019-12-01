@@ -1,0 +1,13 @@
+<form method="post">
+        <tr>
+            <td><input type="text" value="{}" name="id" readonly></td>
+            <td><input type="text" value="{}" name="date" size=8 maxlength=8></td>
+            <td>
+            {}
+            </td>
+            <td></td><td></td><td></td>
+            {}
+            <td><input type="submit" value="Змінти" formaction="change_blank"></td>
+            <td><input type="submit" value="Видалити" formaction="del_blank"></td>
+        </tr>
+    </form>

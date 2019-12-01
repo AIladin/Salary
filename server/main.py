@@ -10,6 +10,11 @@ with open("pages/prof_row_pattern.txt", 'r', encoding="utf-8") as f:
 WORKER_PAGE = "pages/worker_page.html"
 with open("pages/worker_row_pattern.txt", 'r', encoding="utf-8") as f:
     WORKER_PATT = f.read()
+BLANK_PAGE = "pages/blank_page.html"
+with open("pages/blank_row_pattern.txt", 'r', encoding="utf-8") as f:
+    BLANK_PATT = f.read()
+CALC_PAGE = "pages/calc_page.html"
+
 
 
 class SalaryServer:
@@ -22,6 +27,10 @@ class SalaryServer:
                          "show_workers": self.workers,
                          "change_worker": self.change_worker,
                          "del_worker": self.del_worker,
+                         "show_blanks": self.blanks,
+                         "change_blank": self.change_blank,
+                         "del_blank": self.del_blank,
+                         "show_calc": self.calcs,
                          }
 
     def __call__(self, environ, start_response):
@@ -146,19 +155,111 @@ class SalaryServer:
         worker.db_del()
         return self.workers(form)
 
+    @staticmethod
+    def _get_workers_select(_id=None):
+        rez = "<select name='worker_id'>"
+        for worker in Worker.from_db():
+            rez += f"<option value='{worker.id}'" + ("selected" if worker.id == _id else "") +\
+                   f">{worker.name}</option>"
+        return rez + "</select>"
+
+    @staticmethod
+    def _blank_row_gen(data):
+        return "\n".join([f"<td><input type='text' value='{data[i] if i<len(data) else ''}'"
+                          f" maxlength='2' size='2' name='day_{i}'></td>"
+                         for i in range(31)])
+
+    def blanks(self, form):
+        with open(BLANK_PAGE, 'r', encoding='utf-8') as f:
+            cnt = f.read()
+        table = ""
+        for blank in Blank.from_db():
+            table += BLANK_PATT.format(blank.id, blank.month,
+                                       self._get_workers_select(blank.worker.id),
+                                       self._blank_row_gen(blank.data))
+
+        table += """
+        <form method="post">
+        <tr>
+            <td></td>
+            <td><input type="text" value="00-0000" size=8 name="date" maxlength=8></td>
+            <td>
+            {}
+            </td>
+            <td></td><td></td><td></td>
+            {}
+            <td><input type="submit" value="Додати" formaction="change_blank"></td>
+        </tr>
+    </form>
+        """.format(self._get_workers_select(), self._blank_row_gen([""]*31))
+
+        return cnt.format(table)
+
+    def change_blank(self, form: cgi.FieldStorage):
+        b_id = form.getfirst("id", "")
+        if b_id:
+            b_id = int(b_id)
+            blank = Blank.from_db(b_id)
+        else:
+            blank = Blank(None, None, None)
+        try:
+            month = Month.from_m_y(*map(int, form.getfirst("date", "").split("-")))
+            data = HArray()
+            for day in range(len(month)):
+                cell = form.getfirst(f"day_{day}")
+                if cell.isdigit():
+                    cell = int(cell)
+                    if not 0 < cell < 24:
+                        raise ValueError(f"Wrong cell literal {cell}")
+
+                elif cell not in {"л", "в"}:
+                    raise ValueError(f"Wrong cell literal {cell}")
+                data.append(cell)
+            w_id = int(form.getfirst("worker_id", ""))
+            worker = Worker.from_db(w_id)
+            blank.worker = worker
+            blank.month = month
+            blank.data = data
+            blank.dump()
+        except:
+            logging.warning("Wrong input go on working.")
+        return self.blanks(form)
+
+    def del_blank(self, form: cgi.FieldStorage):
+        b_id = int(form.getfirst("id", ""))
+        blank = Blank.from_db(b_id)
+        blank.db_del()
+        return self.blanks(form)
+
+    def calcs(self, form: cgi.FieldStorage):
+        calc_type = form.getfirst("calc", "")
+        if calc_type == "Робітник":
+            month = Month.from_m_y(*map(int, form.getfirst("date", "").split("-")))
+            return self._month_calc(month)
+        else:
+            worker = Worker.from_db(int(form.getfirst('worker_id', "")))
+            b_month = Month.from_m_y(*map(int, form.getfirst("begin_date", "").split("-")))
+            e_month = Month.from_m_y(*map(int, form.getfirst("end_date", "").split("-")))
+            return self._worker_calc(worker, b_month, e_month)
+
+    def _month_calc(self, month):
+        with open(CALC_PAGE, "r", encoding='utf-8') as f:
+            cnt = f.read()
+        return cnt.format("Робітник")
+
+    def _worker_calc(self, worker, b_month, e_month):
+        with open(CALC_PAGE, "r", encoding='utf-8') as f:
+            cnt = f.read()
+        return cnt.format("Місяць")
+
 
 if __name__ == '__main__':
-    if __name__ == '__main__':
-        from wsgiref.simple_server import make_server
-        print('=== Local WSGI webserver ===')
-        httpd = make_server('localhost', 8051, SalaryServer())
-        host, port = httpd.server_address
-        print(f"http://localhost:{port}")
-        logging.basicConfig(level=logging.INFO,
-                            format=f'{host} - - [%(asctime)s] %(levelname)s %(message)s',
-                            datefmt='%d/%b/%Y %H:%M:%S')
-        httpd.serve_forever()
-
-
-
-
+    from wsgiref.simple_server import make_server
+    print('=== Local WSGI web server ===')
+    httpd = make_server('localhost', 8051, SalaryServer())
+    host, port = httpd.server_address
+    print(f"http://localhost:{port}")
+    logging.basicConfig(level=logging.INFO,
+                        format=f'{host} - - [%(asctime)s] %(levelname)s %(message)s',
+                        datefmt='%d/%b/%Y %H:%M:%S')
+    httpd.serve_forever()

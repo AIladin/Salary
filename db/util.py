@@ -29,7 +29,7 @@ class UtilSuperclass:
             for data in db_adapter.get(UtilTypes.BLANK, _id=_id):
                 b_id, w_id, date, data = data
                 worker = Worker.from_db(_id=w_id)
-                rez.append(cls._with_id((b_id, data, date, worker)))
+                rez.append(cls._with_id((b_id, date, data, worker)))
         return rez if not _id else rez[0]
 
     def dump(self):
@@ -65,7 +65,6 @@ class Blank(UtilSuperclass):
 
     def __init__(self, data, month, worker):
         super().__init__()
-        assert len(data) == len(month)
         self.data = data
         self.month = month
         self.worker = worker

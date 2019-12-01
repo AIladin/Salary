@@ -1,0 +1,8 @@
+<tr bgcolor="{}">
+    <td>{}</td>
+    <td>{}</td>
+    <td>{}</td>
+    <td>{}</td>
+    <td>{}</td>
+    <td>{}</td>
+</tr>
