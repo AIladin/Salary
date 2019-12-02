@@ -17,7 +17,6 @@ CALC_PAGE = "pages/calc_page.html"
 with open("pages/calc_pattern.txt", 'r', encoding="utf-8") as f:
     CALC_PATT = f.read()
 
-
 class SalaryServer:
     def __init__(self):
         self.commands = {"": self.start,
@@ -79,7 +78,7 @@ class SalaryServer:
             table += """<form method="post">
                         <tr><td></td>
                         <td><input type="text" value="" name="name"></td>
-                        <td><input type="text" value="" name="min_h" maxlength="3"></td>
+                        <td><input type="text" value="" size=25 name="min_h" maxlength="3"></td>
                         <td><input type="text" value="" name="salary"></td>
                         <td><input type="submit" value="Додати" formaction="change_prof"></td>
                      """
@@ -183,11 +182,14 @@ class SalaryServer:
         <form method="post">
         <tr>
             <td></td>
+<<<<<<< HEAD
             <td><input type="text" value="01-2000" size=7 name="date" maxlength=8></td>
+=======
+            <td><input type="text" value="00-0000" size=4 name="date" maxlength=8></td>
+>>>>>>> 127d0dd9fa55fb0bf7b434016a33c36a8a00eccd
             <td>
             {}
             </td>
-            <td></td><td></td><td></td>
             {}
             <td><input type="submit" value="Додати" formaction="change_blank"></td>
         </tr>
