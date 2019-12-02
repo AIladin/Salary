@@ -182,11 +182,7 @@ class SalaryServer:
         <form method="post">
         <tr>
             <td></td>
-<<<<<<< HEAD
             <td><input type="text" value="01-2000" size=7 name="date" maxlength=8></td>
-=======
-            <td><input type="text" value="00-0000" size=4 name="date" maxlength=8></td>
->>>>>>> 127d0dd9fa55fb0bf7b434016a33c36a8a00eccd
             <td>
             {}
             </td>
