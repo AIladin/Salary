@@ -16,7 +16,6 @@ with open("pages/blank_row_pattern.txt", 'r', encoding="utf-8") as f:
 CALC_PAGE = "pages/calc_page.html"
 
 
-
 class SalaryServer:
     def __init__(self):
         self.commands = {"": self.start,
@@ -78,7 +77,7 @@ class SalaryServer:
             table += """<form method="post">
                         <tr><td></td>
                         <td><input type="text" value="" name="name"></td>
-                        <td><input type="text" value="" name="min_h" maxlength="3"></td>
+                        <td><input type="text" value="" size=25 name="min_h" maxlength="3"></td>
                         <td><input type="text" value="" name="salary"></td>
                         <td><input type="submit" value="Додати" formaction="change_prof"></td>
                      """
@@ -182,11 +181,10 @@ class SalaryServer:
         <form method="post">
         <tr>
             <td></td>
-            <td><input type="text" value="00-0000" size=8 name="date" maxlength=8></td>
+            <td><input type="text" value="00-0000" size=4 name="date" maxlength=8></td>
             <td>
             {}
             </td>
-            <td></td><td></td><td></td>
             {}
             <td><input type="submit" value="Додати" formaction="change_blank"></td>
         </tr>
